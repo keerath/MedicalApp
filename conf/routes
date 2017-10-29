@@ -1,0 +1,7 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+POST     /patient/login                           controller.LoginController.patientLogin
+POST     /doctor/login							  controller.LoginController.doctorLogin
+POST     /patient/register					      controller.RegistrationController.patientRegister
