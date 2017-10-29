@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST     /patient/login                           controller.LoginController.patientLogin
-POST     /doctor/login							  controller.LoginController.doctorLogin
-POST     /patient/register					      controller.RegistrationController.patientRegister
+POST     /api/v1/patient/login                            controller.LoginController.patientLogin
+POST     /api/v1/doctor/login							  controller.LoginController.doctorLogin
+POST     /api/v1/patient/register					      controller.RegistrationController.patientRegister
+POST     /api/v1/doctor/register					      controller.RegistrationController.doctorRegister

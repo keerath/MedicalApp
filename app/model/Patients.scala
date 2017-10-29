@@ -47,15 +47,15 @@ object Patients {
 
   val patientTable = TableQuery[PatientTable]
 
-  createTablesIfNotExist()
+  createTableIfNotExist()
 
   def add(patient: Patient) = Await.result(dbConfig.db.run(patientTable += patient).map(res => patient), Duration.Inf)
 
-  def authenticatePatient(email: String, password: String): Option[PatientTable#TableElementType] =
+  def authenticate(email: String, password: String): Option[PatientTable#TableElementType] =
     Await.result(dbConfig.db.run(patientTable.filter(
       patient => patient.email === email && patient.password === password).result), Duration.Inf).headOption
 
-  private def createTablesIfNotExist(): Unit = {
+  private def createTableIfNotExist(): Unit = {
     val table = List(patientTable)
     val tableCreationFuture = dbConfig.db.run(DBIO.sequence(table.map(_.schema.create)))
     Try(Await.result(tableCreationFuture, Duration.Inf))
