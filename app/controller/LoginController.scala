@@ -4,10 +4,6 @@ import model.{DoctorTable, Doctors, PatientTable, Patients}
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
-
-/**
-  * Created by keerath on 29/10/17.
-  */
 class LoginController extends Controller {
 
   def patientLogin = Action { request =>

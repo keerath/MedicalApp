@@ -1,9 +1,5 @@
 package model
 
-/**
-  * Created by keerath on 29/10/17.
-  */
-
 import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
@@ -43,21 +39,21 @@ class PatientTable(tag: Tag) extends Table[Patient](tag, "Patient") {
 
 object Patients {
 
-  val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
+  val db = DatabaseConfigProvider.get[JdbcProfile](Play.current).db
 
   val patientTable = TableQuery[PatientTable]
 
   createTableIfNotExist()
 
-  def add(patient: Patient) = Await.result(dbConfig.db.run(patientTable += patient).map(res => patient), Duration.Inf)
+  def add(patient: Patient) = Await.result(db.run(patientTable += patient).map(res => patient), Duration.Inf)
 
   def authenticate(email: String, password: String): Option[PatientTable#TableElementType] =
-    Await.result(dbConfig.db.run(patientTable.filter(
+    Await.result(db.run(patientTable.filter(
       patient => patient.email === email && patient.password === password).result), Duration.Inf).headOption
 
   private def createTableIfNotExist(): Unit = {
     val table = List(patientTable)
-    val tableCreationFuture = dbConfig.db.run(DBIO.sequence(table.map(_.schema.create)))
+    val tableCreationFuture = db.run(DBIO.sequence(table.map(_.schema.create)))
     Try(Await.result(tableCreationFuture, Duration.Inf))
   }
 }

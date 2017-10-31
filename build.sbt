@@ -1,4 +1,4 @@
-name := "play-scala"
+name := "MedicalApp"
 
 version := "1.0-SNAPSHOT"
 
@@ -13,7 +13,6 @@ val slick = Seq(
 )
 
 libraryDependencies ++= Seq(
-  /*jdbc,*/
   cache,
   ws,
   specs2 % Test

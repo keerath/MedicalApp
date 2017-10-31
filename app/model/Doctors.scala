@@ -1,9 +1,5 @@
 package model
 
-/**
-  * Created by keerath on 29/10/17.
-  */
-
 import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
@@ -41,22 +37,28 @@ class DoctorTable(tag: Tag) extends Table[Doctor](tag, "Doctor") {
 
 object Doctors {
 
-  val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
+  val db = DatabaseConfigProvider.get[JdbcProfile](Play.current).db
 
   val doctorTable = TableQuery[DoctorTable]
 
   createTableIfNotExist()
 
-  def add(doctor: Doctor) = Await.result(dbConfig.db.run(doctorTable += doctor).map(res => doctor), Duration.Inf)
+  def add(doctor: Doctor) = Await.result(db.run(doctorTable += doctor).map(res => doctor), Duration.Inf)
 
   def authenticate(email: String, password: String): Option[DoctorTable#TableElementType] =
-    Await.result(dbConfig.db.run(doctorTable.filter(
+    Await.result(db.run(doctorTable.filter(
       doctor => doctor.email === email && doctor.password === password).result), Duration.Inf).headOption
 
   private def createTableIfNotExist(): Unit = {
     val table = List(doctorTable)
-    val tableCreationFuture = dbConfig.db.run(DBIO.sequence(table.map(_.schema.create)))
+    val tableCreationFuture = db.run(DBIO.sequence(table.map(_.schema.create)))
     Try(Await.result(tableCreationFuture, Duration.Inf))
   }
+
+  def listSpecialities() =
+    Await.result(db.run(doctorTable.map(_.speciality).distinct.result), Duration.Inf)
+
+  def filterWithSpeciality(speciality: String) =
+    Await.result(db.run(doctorTable.filter(_.speciality === speciality).result), Duration.Inf)
 }
 
