@@ -6,5 +6,8 @@ POST     /api/v1/patient/login                            controller.LoginContro
 POST     /api/v1/doctor/login							  controller.LoginController.doctorLogin
 POST     /api/v1/patient/register					      controller.RegistrationController.patientRegister
 POST     /api/v1/doctor/register					      controller.RegistrationController.doctorRegister
-GET		 /api/v1/doctor/speciality/list				      controller.AppointmentController.listDoctorSpecialities
-GET		 /api/v1/doctor/list				  			  controller.AppointmentController.listDoctorsWithSpeciality(speciality: String)
+POST	 /api/v1/doctor/speciality/list				      controller.AppointmentController.listDoctorSpecialities
+POST	 /api/v1/doctor/list				  			  controller.AppointmentController.listDoctorsWithSpeciality(speciality: String)
+POST     /api/v1/appointment/book						  controller.AppointmentController.bookAppointment
+POST     /api/v1/appointment/list						  controller.AppointmentController.listAppointments(doctorId: Long)
+POST     /api/v1/appointment/details				      controller.AppointmentController.getDetails(appointmentId: Long)
