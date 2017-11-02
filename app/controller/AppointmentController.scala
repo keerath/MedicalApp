@@ -1,7 +1,7 @@
 package controller
 
-import model.{Appointment, AppointmentDetails, AppointmentTable, Appointments, DoctorTable, Doctors, Patient}
-import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString, Json}
+import model.{Appointment, AppointmentDetails, Appointments, DoctorTable, Doctors}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.mvc.{Action, Controller}
 
 
@@ -30,7 +30,7 @@ class AppointmentController extends Controller {
   def listAppointments(doctorId: Long) = Action { request =>
     val appointmentDetailsList = Appointments.list(doctorId.toLong)
     implicit val writes = Json.writes[AppointmentDetails]
-    Ok(Json.toJson(appointmentDetailsList).toString())
+    Ok(JsObject(Seq("appointments" -> Json.toJson(appointmentDetailsList))).toString())
   }
 
   def getDetails(appointmentId: Long) = Action { request =>
