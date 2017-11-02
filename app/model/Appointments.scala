@@ -15,7 +15,7 @@ case class Appointment(id: Long, patientId: Long, doctorId: Long, timestamp: Lon
 
 case class AppointmentDetails(appointmentId: Long, appointmentTimestamp: Long,
                               name: String, gender: String, age: Int, email: String,
-                              emergencyNumber: String, bloodGroup: String)
+                              emergencyNumber: String, bloodGroup: String, doctorId: Long)
 
 class AppointmentTable(tag: Tag) extends Table[Appointment](tag, "Appointment") {
 
@@ -50,15 +50,17 @@ object Appointments {
   def add(appointment: Appointment) =
     Await.result(db.run(appointmentTable += appointment).map(res => appointment), Duration.Inf)
 
-  def list(doctorId: Long) = Await.result(db.run(
-    appointmentTable.filter(_.doctorId === doctorId).sortBy(_.timestamp).result), Duration.Inf)
+  val fatTable = for {
 
-  val appointmentJoinPatient = for {
-    (appointment, patient) <- appointmentTable join Patients.patientTable on (_.patientId === _.id)
+    ((appointment, patient), doctor) <- appointmentTable join Patients.patientTable on (_.patientId === _.id) join Doctors.doctorTable on (_._1.doctorId === _.id)
+
   } yield (appointment.id, appointment.timestamp, patient.name, patient.gender,
-    patient.age, patient.email, patient.emergencyNumber, patient.bloodGroup)
+    patient.age, patient.email, patient.emergencyNumber, patient.bloodGroup, doctor.id)
 
-  def get(appointmentId: Long) = (AppointmentDetails.apply _ ).tupled(
-    Await.result(db.run(appointmentJoinPatient
-      .filter(_._1 === appointmentId).result), Duration.Inf).head)
+  def list(doctorId: Long) = Await.result(db.run(fatTable.filter(_._9 === doctorId).sortBy(_._2).result), Duration.Inf)
+    .map((AppointmentDetails.apply _).tupled)
+
+  def get(appointmentId: Long) = (AppointmentDetails.apply _).tupled(
+    Await.result(db.run(fatTable.filter(_._1 === appointmentId).result), Duration.Inf).head
+  )
 }

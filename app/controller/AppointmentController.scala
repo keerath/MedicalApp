@@ -28,9 +28,9 @@ class AppointmentController extends Controller {
   }
 
   def listAppointments(doctorId: Long) = Action { request =>
-    val appointmentList = Appointments.list(doctorId.toLong)
-    implicit val writes = Json.writes[AppointmentTable#TableElementType]
-    Ok(Json.toJson(appointmentList).toString())
+    val appointmentDetailsList = Appointments.list(doctorId.toLong)
+    implicit val writes = Json.writes[AppointmentDetails]
+    Ok(Json.toJson(appointmentDetailsList).toString())
   }
 
   def getDetails(appointmentId: Long) = Action { request =>
